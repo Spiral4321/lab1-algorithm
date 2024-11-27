@@ -1,0 +1,103 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+double WCen(double);
+double HCen(double);
+double BPound(double);
+double SPage(double);
+double Discount(double);
+double calculateMemberDiscount(double Book[], int numBooks);
+
+int main() {
+    int M = 0; // Check the member of the customer
+    int y = 0; // To asking for the next book
+    int i = 1; // Number of the book
+    double price = 0;
+    double HInch, WInch, gram, page, days, discount = 0;
+    double Book[10] = {}; // Store book prices
+
+    do {
+        cout << "Enter the height of the book in inch: ";
+        cin >> HInch;
+        cout << "Enter the width of the book in inch: ";
+        cin >> WInch;
+        cout << "Enter the weight of the book in grams: ";
+        cin >> gram;
+        cout << "Enter the number of pages: ";
+        cin >> page;
+        cout << "Enter how many days in the stock: ";
+        cin >> days;
+
+        // Calculate price for the current book
+        Book[i] = ((((WCen(WInch) * HCen(HInch)) * BPound(gram)) * 10) + SPage(page)) - Discount(days);
+        i++;
+
+        cout << "Is there any more book? (0=Yes, 1=No): ";
+        cin >> y;
+
+    } while (y != 1); 
+
+    // If the customer buys at least 3 books, check for a member discount
+    if (i >= 3) {
+        cout << "Does the customer have a member card? (0=Yes, 1=No): ";
+        cin >> M;
+
+        if (M == 0) {
+            discount = calculateMemberDiscount(Book, i);
+        }
+    }
+
+    // Calculate the total price
+    for (int j = 1; j < i; j++) {
+        price += Book[j];
+    }
+
+    // Apply the member discount, if any
+    price -= discount;
+
+    cout << "The total price is: $" << price << endl;
+
+    return 0;
+}
+
+// Convert width from inches to centimeters
+double WCen(double W) {
+    return W * 2.54;
+}
+
+double HCen(double H) {
+    return H * 2.54;
+}
+
+// Convert weight from grams to pounds
+double BPound(double G) {
+    return G * 0.00220462262;
+}
+
+// Calculate a special value based on the number of pages
+double SPage(double P) {
+    return sqrt(P);
+}
+
+// Calculate discount based on days in stock
+double Discount(double D) {
+    if (D > 10 && D < 21) {
+        return 2 * D;
+    } else if (D > 20) {
+        return 5 * D;
+    } else {
+        return 0;
+    }
+}
+
+// Calculate the member discount on the cheapest book
+double calculateMemberDiscount(double Book[], int numBooks) {
+       double cheapest = Book[0];
+    for (int j = 1; j < numBooks; j++) {
+        if (Book[j] < cheapest) {
+            cheapest = Book[j];
+        }
+    }
+    return (cheapest * 80) /100;
+}
